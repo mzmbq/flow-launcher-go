@@ -1,0 +1,13 @@
+{
+  "$schema": "https://www.flowlauncher.com/schemas/plugin.schema.json",
+  "ID": "4f160fe6-173e-427b-b6f2-ccbabf20179c",
+  "ActionKeywords": ["meal"],
+  "Name": "Meals",
+  "Description": "Search or get random recipes.",
+  "Author": "mzmbq",
+  "Version": "1.0",
+  "Language": "executable",
+  "Website": "https://ddg.gg",
+  "IcoPath": "./icon.png",
+  "ExecuteFileName": "meals.exe"
+}
