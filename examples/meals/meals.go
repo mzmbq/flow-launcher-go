@@ -94,6 +94,10 @@ func handleQuery(req *flow.Request) *flow.Response {
 }
 
 func handleOpenAction(params []string) *flow.Response {
+	if params[0] == "" {
+		params[0] = "https://telegra.ph/Error-04-05-449"
+	}
+
 	err := exec.Command("cmd", "/c", "start", params[0]).Start()
 	if err != nil {
 		return flow.ErrorResponse(err.Error())
