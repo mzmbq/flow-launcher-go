@@ -62,22 +62,19 @@ func searchMealByName(name string) (*Meals, error) {
 func handleQuery(req *flow.Request) *flow.Response {
 	var meals *Meals
 	var err error
-	if len(req.Parameters) == 1 && req.Parameters[0] == "" {
+	if req.Parameters[0] == "" {
 		meals, err = fetchRandomMeal()
 	} else {
 		meals, err = searchMealByName(req.Parameters[0])
 	}
 
 	if err != nil {
-		return &flow.Response{
-			Results:      nil,
-			DebugMessage: "failed fetching API",
-		}
+		res := flow.NewResponse(req)
+		res.DebugMessage = "failed to fetch API"
+		return res
 	}
 
-	resp := &flow.Response{
-		Results: make([]flow.Result, 0),
-	}
+	resp := flow.NewResponse(req)
 	for _, m := range meals.Meals {
 		result := flow.Result{
 			Title:    m.Title,
@@ -88,17 +85,18 @@ func handleQuery(req *flow.Request) *flow.Response {
 				Parameters: []string{m.Link},
 			},
 		}
-		resp.Results = append(resp.Results, result)
+		resp.AddResult(&result)
 	}
 	return resp
 }
 
 func handleOpenAction(params []string) *flow.Response {
-	if params[0] == "" {
-		params[0] = "https://telegra.ph/Error-04-05-449"
+	url := params[0]
+	if url == "" {
+		url = "https://telegra.ph/Error-04-05-449"
 	}
 
-	err := exec.Command("cmd", "/c", "start", params[0]).Start()
+	err := exec.Command("cmd", "/c", "start", url).Start()
 	if err != nil {
 		return flow.ErrorResponse(err.Error())
 	}
@@ -107,7 +105,7 @@ func handleOpenAction(params []string) *flow.Response {
 
 func main() {
 	if len(os.Args) < 2 {
-		panic("two arguments required")
+		panic("Usage: meals.exe <query>")
 	}
 
 	p := flow.NewPlugin()

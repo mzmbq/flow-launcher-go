@@ -51,7 +51,7 @@ func (p *Plugin) HandleRPC(query string) error {
 
 	default:
 		res = &Response{
-			Results:      []Result{},
+			Results:      make([]*Result, 0),
 			DebugMessage: "error: invalid method",
 		}
 	}

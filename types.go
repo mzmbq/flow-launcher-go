@@ -1,11 +1,29 @@
 package flow
 
+type Error struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    string `json:"data"`
+}
+
+// `jsonrpc` is not used by Flow Launcher
+type JsonRpcBase struct {
+	ID  int   `json:"id"`
+	Err Error `json:"error"`
+}
+
 type Request struct {
+	JsonRpcBase
 	Method     string   `json:"method"`
 	Parameters []string `json:"parameters"`
-	Settings   map[string]string
-	ID         int
-	Error      string
+	Settings   map[string]any
+}
+
+type Response struct {
+	JsonRpcBase
+	Results        []*Result `json:"result"`
+	SettingsChange map[string]any
+	DebugMessage   string `json:",omitempty"`
 }
 
 type Result struct {
@@ -20,7 +38,17 @@ type JsonRpcAction struct {
 	Parameters []string `json:"parameters"`
 }
 
-type Response struct {
-	Results      []Result `json:"result"`
-	DebugMessage string   `json:",omitempty"`
+func NewResponse(req *Request) *Response {
+	res := &Response{
+		JsonRpcBase: JsonRpcBase{
+			ID: req.ID,
+		},
+		Results: make([]*Result, 0),
+	}
+
+	return res
+}
+
+func (resp *Response) AddResult(r *Result) {
+	resp.Results = append(resp.Results, r)
 }
